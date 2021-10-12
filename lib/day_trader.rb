@@ -1,32 +1,35 @@
 def day_trader(prices)
-  biggest_deltas = []
+  deltas = []
+  prices.each_index { |i| deltas[i] = best_delta(prices, i) }
 
-  prices.each_index { |i| biggest_deltas[i] = get_best_delta(prices, i) }
-  buy_index = biggest_deltas.index(biggest_deltas.max)  
-  sell_index = get_best_delta_index(prices, buy_index) 
-  return [buy_index, sell_index]
+  buy_spot = deltas.index(deltas.max)  
+  sell_spot = best_diff_index(prices, buy_spot)
+
+  return [buy_spot, sell_spot]
 end
 
-def get_best_delta(prices, start_index)
-  diff = Array.new(9, -1000)
-  for i in start_index..prices.length-1
-    diff[i] = prices[i] - prices[start_index]
-  end  
-  best_sell_value = diff.max + prices[start_index]
-  start_value = prices[start_index]
+def best_delta(prices, start)
+  diff = create_diff_array(prices, start)
+
+  best_sell_value = diff.max + prices[start]
+  start_value = prices[start]
   delta = best_sell_value - start_value
+
   return delta
 end
 
-def get_best_delta_index(prices, start_index)
-  diff = Array.new(9, -1000)
-  for i in start_index..prices.length-1
-    diff[i] = prices[i] - prices[start_index]
-  end
+def best_diff_index(prices, start)
+  diff = create_diff_array(prices, start)
   return diff.index(diff.max)
 end
 
-
+def create_diff_array(array, start)
+  diff = Array.new(9, -1000)
+  for i in start..array.length-1
+    diff[i] = array[i] - array[start]
+  end
+  return diff 
+end
 
 prices = [17, 3, 6, 9, 15, 8, 6, 1, 10]
 
